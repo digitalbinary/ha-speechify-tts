@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect Speechify",
+        "description": "Enter your Speechify API key, voice ID, model and default language. The key is checked on the first speech request.",
+        "data": {
+          "api_key": "Speechify API key",
+          "voice_id": "Default voice ID",
+          "model": "Default model",
+          "language": "Default language (e.g. en-US or ceb-PH)"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Speechify is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Speechify settings",
+        "data": {
+          "voice_id": "Default voice ID",
+          "model": "Default model",
+          "language": "Default language"
+        }
+      }
+    }
+  }
+}

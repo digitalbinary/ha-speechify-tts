@@ -1,0 +1,11 @@
+{
+  "domain": "speechify_tts",
+  "name": "Speechify TTS",
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://github.com/digitalbinary/ha-speechify-tts",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "version": "0.1.0",
+  "issue_tracker": "https://github.com/digitalbinary/ha-speechify-tts/issues"
+}
