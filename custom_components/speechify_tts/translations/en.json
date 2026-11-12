@@ -3,12 +3,14 @@
     "step": {
       "user": {
         "title": "Connect Speechify",
-        "description": "Enter your Speechify API key, voice ID, model and default language. The key is checked on the first speech request.",
+        "description": "Enter your Speechify API key, voice ID, model and default locale. By default, no language is sent to Speechify, and text normalization is disabled.",
         "data": {
           "api_key": "Speechify API key",
           "voice_id": "Default voice ID",
           "model": "Default model",
-          "language": "Default language (e.g. en-US or ceb-PH)"
+          "language": "Default language / locale (used only when language is not omitted)",
+          "omit_language": "Omit language parameter (recommended for multilingual text)",
+          "text_normalization": "Enable text normalization"
         }
       }
     },
@@ -23,7 +25,9 @@
         "data": {
           "voice_id": "Default voice ID",
           "model": "Default model",
-          "language": "Default language"
+          "language": "Default language / locale",
+          "omit_language": "Omit language parameter (recommended for multilingual text)",
+          "text_normalization": "Enable text normalization"
         }
       }
     }
