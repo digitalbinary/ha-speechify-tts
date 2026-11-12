@@ -4,10 +4,14 @@ CONF_API_KEY = "api_key"
 CONF_VOICE_ID = "voice_id"
 CONF_MODEL = "model"
 CONF_LANGUAGE = "language"
+CONF_OMIT_LANGUAGE = "omit_language"
+CONF_TEXT_NORMALIZATION = "text_normalization"
 
 DEFAULT_VOICE_ID = "geffen_32"
 DEFAULT_MODEL = "simba-3.5"
 DEFAULT_LANGUAGE = "ceb-PH"
+DEFAULT_OMIT_LANGUAGE = True
+DEFAULT_TEXT_NORMALIZATION = False
 
 STREAM_ENDPOINT = "https://api.speechify.ai/v1/audio/stream"
 MODELS = ["simba-3.5", "simba-3.2", "simba-3.0"]

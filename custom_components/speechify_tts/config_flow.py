@@ -12,9 +12,13 @@ from .const import (
     CONF_API_KEY,
     CONF_LANGUAGE,
     CONF_MODEL,
+    CONF_OMIT_LANGUAGE,
+    CONF_TEXT_NORMALIZATION,
     CONF_VOICE_ID,
     DEFAULT_LANGUAGE,
     DEFAULT_MODEL,
+    DEFAULT_OMIT_LANGUAGE,
+    DEFAULT_TEXT_NORMALIZATION,
     DEFAULT_VOICE_ID,
     DOMAIN,
     MODELS,
@@ -45,6 +49,13 @@ class SpeechifyConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Optional(CONF_VOICE_ID, default=DEFAULT_VOICE_ID): str,
                 vol.Optional(CONF_MODEL, default=DEFAULT_MODEL): vol.In(MODELS),
                 vol.Optional(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): str,
+                vol.Optional(
+                    CONF_OMIT_LANGUAGE, default=DEFAULT_OMIT_LANGUAGE
+                ): bool,
+                vol.Optional(
+                    CONF_TEXT_NORMALIZATION,
+                    default=DEFAULT_TEXT_NORMALIZATION,
+                ): bool,
             }
         )
         return self.async_show_form(step_id="user", data_schema=schema)
@@ -56,7 +67,7 @@ class SpeechifyConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class SpeechifyOptionsFlow(OptionsFlowWithReload):
-    """Allow changing voice, model and language after setup."""
+    """Allow changing voice, model, locale and text normalization after setup."""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -80,6 +91,18 @@ class SpeechifyOptionsFlow(OptionsFlowWithReload):
                     CONF_LANGUAGE,
                     default=current.get(CONF_LANGUAGE, DEFAULT_LANGUAGE),
                 ): str,
+                vol.Required(
+                    CONF_OMIT_LANGUAGE,
+                    default=current.get(
+                        CONF_OMIT_LANGUAGE, DEFAULT_OMIT_LANGUAGE
+                    ),
+                ): bool,
+                vol.Required(
+                    CONF_TEXT_NORMALIZATION,
+                    default=current.get(
+                        CONF_TEXT_NORMALIZATION, DEFAULT_TEXT_NORMALIZATION
+                    ),
+                ): bool,
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)
