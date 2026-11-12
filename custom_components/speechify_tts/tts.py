@@ -17,9 +17,13 @@ from .const import (
     CONF_API_KEY,
     CONF_LANGUAGE,
     CONF_MODEL,
+    CONF_OMIT_LANGUAGE,
+    CONF_TEXT_NORMALIZATION,
     CONF_VOICE_ID,
     DEFAULT_LANGUAGE,
     DEFAULT_MODEL,
+    DEFAULT_OMIT_LANGUAGE,
+    DEFAULT_TEXT_NORMALIZATION,
     DEFAULT_VOICE_ID,
     DOMAIN,
     STREAM_ENDPOINT,
@@ -44,7 +48,12 @@ class SpeechifyTTSEntity(TextToSpeechEntity):
     _attr_has_entity_name = True
     _attr_name = "Speechify"
     _attr_supported_languages = SUPPORTED_LANGUAGES
-    _attr_supported_options = ["voice", "model"]
+    _attr_supported_options = [
+        "voice",
+        "model",
+        "omit_language",
+        "text_normalization",
+    ]
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         """Initialize the entity."""
@@ -66,16 +75,22 @@ class SpeechifyTTSEntity(TextToSpeechEntity):
 
     @property
     def default_language(self) -> str:
-        """Return configured default language."""
+        """Return configured default language for Home Assistant's TTS UI."""
         return self._settings.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
 
     @property
     def default_options(self) -> dict[str, Any]:
-        """Return configured voice and model."""
+        """Return configured defaults for voice and API options."""
         settings = self._settings
         return {
             "voice": settings.get(CONF_VOICE_ID, DEFAULT_VOICE_ID),
             "model": settings.get(CONF_MODEL, DEFAULT_MODEL),
+            "omit_language": settings.get(
+                CONF_OMIT_LANGUAGE, DEFAULT_OMIT_LANGUAGE
+            ),
+            "text_normalization": settings.get(
+                CONF_TEXT_NORMALIZATION, DEFAULT_TEXT_NORMALIZATION
+            ),
         }
 
     async def async_get_tts_audio(
@@ -88,7 +103,18 @@ class SpeechifyTTSEntity(TextToSpeechEntity):
             raise HomeAssistantError("Speechify input exceeds 32,000 characters.")
 
         settings = self._settings
-        payload = {
+        omit_language = options.get(
+            "omit_language",
+            settings.get(CONF_OMIT_LANGUAGE, DEFAULT_OMIT_LANGUAGE),
+        )
+        text_normalization = options.get(
+            "text_normalization",
+            settings.get(
+                CONF_TEXT_NORMALIZATION, DEFAULT_TEXT_NORMALIZATION
+            ),
+        )
+
+        payload: dict[str, Any] = {
             "input": message,
             "voice_id": options.get(
                 "voice", settings.get(CONF_VOICE_ID, DEFAULT_VOICE_ID)
@@ -96,8 +122,18 @@ class SpeechifyTTSEntity(TextToSpeechEntity):
             "model": options.get(
                 "model", settings.get(CONF_MODEL, DEFAULT_MODEL)
             ),
-            "language": language or settings.get(CONF_LANGUAGE, DEFAULT_LANGUAGE),
+            "options": {
+                "text_normalization": bool(text_normalization),
+            },
         }
+
+        # Do not send a locale when automatic/default voice-language handling
+        # is selected. Sending ceb-PH or en-US can force the wrong pronunciation
+        # for Filipino, Cebuano, or mixed-language text.
+        if not omit_language:
+            payload["language"] = (
+                language or settings.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
+            )
 
         session = async_get_clientsession(self.hass)
         try:
